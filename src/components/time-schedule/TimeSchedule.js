@@ -154,7 +154,7 @@ const TimeSchedule = ({ events, activeCell, cellClickHandler }) => {
   return (
     <TimeScheduleWrapper>
       { getTimeList() }
-      <ScheduleTable cols="7">
+      <ScheduleTable cols={DAYS_IN_WEEK}>
         { getTableBody(mappedEvents) }
       </ScheduleTable>
     </TimeScheduleWrapper>
