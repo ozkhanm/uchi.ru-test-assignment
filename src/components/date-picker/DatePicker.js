@@ -1,5 +1,7 @@
 import styled from "styled-components";
 
+import { DAYS_OF_WEEK_SHORTNAMES, MONTHS, DAYS_IN_WEEK } from "../../constants";
+
 const DatePickerWrapper = styled.div`
   padding-left: 50.5px;
   padding-right: 15px;
@@ -74,10 +76,6 @@ const DateSliceList = styled.ul`
   margin-bottom: 8px;
 
   list-style: none;
-
-  ${({ position }) => position && `
-    justify-content: flex-end;
-  `}
 `;
 
 const DateSliceListItem = styled.li`
@@ -118,35 +116,11 @@ const DateListItemTextWrapper = styled.p`
   `}
 `;
 
-const DatePicker = ({ date, currentDate, dateWindow }) => {
-  const daysOfWeekShortnames = {
-    "1": "M",
-    "2": "T",
-    "3": "W",
-    "4": "T",
-    "5": "F",
-    "6": "S",
-    "7": "S"
-  };
-  const months = {
-    "0": "January",
-    "1": "February",
-    "2": "March",
-    "3": "April",
-    "4": "May",
-    "5": "June",
-    "6": "Jule",
-    "7": "August",
-    "8": "September",
-    "9": "October",
-    "10": "November",
-    "11": "December"
-  };
-
-  const getDaysShortnamesList = (daysShortnames) => {
+const DatePicker = ({ dateWindow, leftArrowButtonClickHandler, rightArrowButtonClickHandler }) => {
+  const getDaysShortnamesList = () => {
     const daysShortnamesElements = [];
     
-    Object.values(daysShortnames).forEach((it, index) => daysShortnamesElements.push(
+    Object.values(DAYS_OF_WEEK_SHORTNAMES).forEach((it, index) => daysShortnamesElements.push(
       <DaysShortnamesListItem key={`days-shortnames-list-${index}`}>{it}</DaysShortnamesListItem>
     ));
 
@@ -158,39 +132,49 @@ const DatePicker = ({ date, currentDate, dateWindow }) => {
   };
 
   const getDateSliceList = (dateWindow) => {
-    const {start, end} = dateWindow;
-    const startDate = new Date(start).getDate();
-    const endDate = new Date(end).getDate();
+    const {start} = dateWindow;
+    const startYear = start.getFullYear();
+    const startMonth = start.getMonth();
+    const startDate = start.getDate();
     const dateSliceElements = [];
-    const position = startDate === 1 ? true : false;
+    const currentDate = new Date();
 
-    for (let i = 0; i <= endDate - startDate; i++) {
-      const isActive = (startDate + i === new Date().getDate()) && (currentDate.month === new Date().getMonth()) && (currentDate.year === new Date().getFullYear());
+    for (let i = 0; i < DAYS_IN_WEEK; i++) {
+      const iterDate = new Date(startYear, startMonth, startDate + i);
+      const isActive = (iterDate.getDate() === currentDate.getDate()) && (iterDate.getMonth() === currentDate.getMonth()) && (iterDate.getFullYear() === currentDate.getFullYear());
 
       dateSliceElements.push(
         <DateSliceListItem key={`date-slice-list-${i}`}>
           <DateListItemTextWrapper active={isActive}>
-            <DateListItemText>{startDate + i}</DateListItemText>
+            <DateListItemText>{iterDate.getDate()}</DateListItemText>
           </DateListItemTextWrapper>
         </DateSliceListItem>
       );
     }
 
     return (
-      <DateSliceList position={position}>
+      <DateSliceList>
         { dateSliceElements }
       </DateSliceList>
     );
   };
 
+  const getDateInfoText = (dateWindow) => {
+    const {start, end, monthChange} = dateWindow;
+    const startMonth = start.getMonth();
+    const endMonth = end.getMonth();
+
+    return !monthChange ? `${MONTHS[startMonth]} ${start.getFullYear()}` : `${MONTHS[startMonth]} ${start.getFullYear()} - ${MONTHS[endMonth]} ${end.getFullYear()}`;
+  };
+
   return (
     <DatePickerWrapper>
-      { getDaysShortnamesList(daysOfWeekShortnames) }
+      { getDaysShortnamesList() }
       { getDateSliceList(dateWindow) }
       <DateControlsWrapper>
-        <ButtonArrowLeft></ButtonArrowLeft>
-        <DateInfo>{`${months[date.getMonth()]} ${date.getFullYear()}`}</DateInfo>
-        <ButtonArrowRight></ButtonArrowRight>
+        <ButtonArrowLeft onClick={leftArrowButtonClickHandler} />
+        <DateInfo>{ getDateInfoText(dateWindow) }</DateInfo>
+        <ButtonArrowRight onClick={rightArrowButtonClickHandler} />
       </DateControlsWrapper>
     </DatePickerWrapper>
   );

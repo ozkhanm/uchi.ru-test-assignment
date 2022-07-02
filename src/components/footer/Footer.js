@@ -35,11 +35,11 @@ const Button = styled.button`
   border: 0;
 `;
 
-const Footer = ({ deleteButtonShowStatus }) => {
+const Footer = ({ deleteButtonShowStatus, deleteButtonClickHandler, todayButtonClickHandler }) => {
   return (
     <FooterWrapper>
-      <Button>Today</Button>
-      { deleteButtonShowStatus ? <Button>Delete</Button> : "" }
+      <Button onClick={todayButtonClickHandler}>Today</Button>
+      { deleteButtonShowStatus ? <Button onClick={deleteButtonClickHandler}>Delete</Button> : "" }
     </FooterWrapper>
   );
 };

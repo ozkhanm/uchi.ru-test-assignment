@@ -1,5 +1,7 @@
 import styled from "styled-components";
 
+import { DAYS_IN_WEEK, TIME_ZONES } from "../../constants";
+
 const TimeScheduleWrapper = styled.div`
   position: relative;
   
@@ -79,14 +81,12 @@ const ScheduleTableRadioInputLabel = styled.label`
 `;
 
 const TimeSchedule = ({ events, activeCell, cellClickHandler }) => {
-  const DAYS_IN_WEEK = 7;
-  const TIME_ZONES = 24;
   const mappedEvents = mapEvents(events);
 
   function mapEvents(events) {
     return events.map((it) => {
-      const date = new Date(it.date);
-      const day = date.getDay();
+      const date = it.date;
+      const day = date.getDay() === 0 ? 7 : date.getDay();
       const hour = date.getHours();
       
       return {
@@ -129,7 +129,9 @@ const TimeSchedule = ({ events, activeCell, cellClickHandler }) => {
               const column = parseInt(evt.target.dataset.column);
               const row = parseInt(evt.target.dataset.row);
               
-              cellClickHandler(row, column);
+              if (!isActive) {
+                cellClickHandler(row, column);
+              }
             }} />
           </ScheduleTableCell>
         );

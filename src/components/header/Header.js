@@ -34,11 +34,11 @@ const AddButton = styled.button`
   border: 0;
 `;
 
-const Header = () => {
+const Header = ({ addButtonClickHandler }) => {
   return (
     <HeaderWrapper>
       <Title>Interview Calendar</Title>
-      <AddButton/>
+      <AddButton onClick={addButtonClickHandler} />
     </HeaderWrapper>
   );
 };
